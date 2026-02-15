@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kumpulan Kosakata - JFT Basic A2 Prep</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+
+    .flip-card {
+      perspective: 1000px;
+    }
+
+    .flip-card-inner {
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+      position: relative;
+    }
+
+    .flipped {
+      transform: rotateY(180deg);
+    }
+
+    .flip-card-front, .flip-card-back {
+      backface-visibility: hidden;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    .flip-card-back {
+      transform: rotateY(180deg);
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-blue-600 text-white p-5 rounded-b-3xl shadow-lg">
+    <h1 class="text-xl font-bold">Kumpulan Kosakata</h1>
+    <p class="text-sm opacity-90">Level JFT Basic A2</p>
+  </header>
+
+  <!-- Search & Filter -->
+  <div class="p-4 bg-white shadow-sm space-y-3">
+
+    <input 
+      type="text" 
+      id="searchInput"
+      placeholder="Cari kosakata..."
+      class="w-full p-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-blue-500"
+    >
+
+    <select id="categoryFilter"
+      class="w-full p-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <option value="all">Semua Kategori</option>
+      <option value="kata-kerja">Kata Kerja</option>
+      <option value="kata-sifat">Kata Sifat</option>
+      <option value="kata-benda">Kata Benda</option>
+    </select>
+
+  </div>
+
+  <!-- Vocab List -->
+  <main id="vocabContainer"
+        class="flex-1 p-4 grid grid-cols-1 gap-4">
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav class="bg-white shadow-inner p-3 flex justify-around text-sm border-t">
+    <a href="index.html" class="flex flex-col items-center text-gray-500">
+      🏠<span>Home</span>
+    </a>
+    <a href="vocab.html" class="flex flex-col items-center text-blue-600 font-semibold">
+      📚<span>Vocab</span>
+    </a>
+    <a href="quiz.html" class="flex flex-col items-center text-gray-500">
+      🧠<span>Quiz</span>
+    </a>
+    <a href="progress.html" class="flex flex-col items-center text-gray-500">
+      📊<span>Progress</span>
+    </a>
+  </nav>
+
+<script>
+const vocabData = [
+  {
+    kanji: "行く",
+    hiragana: "いく",
+    arti: "Pergi",
+    kategori: "kata-kerja",
+    contoh: "学校へ行きます。"
+  },
+  {
+    kanji: "大きい",
+    hiragana: "おおきい",
+    arti: "Besar",
+    kategori: "kata-sifat",
+    contoh: "大きい家です。"
+  },
+  {
+    kanji: "仕事",
+    hiragana: "しごと",
+    arti: "Pekerjaan",
+    kategori: "kata-benda",
+    contoh: "仕事をします。"
+  }
+];
+
+const container = document.getElementById("vocabContainer");
+const searchInput = document.getElementById("searchInput");
+const categoryFilter = document.getElementById("categoryFilter");
+
+function renderVocab(data) {
+  container.innerHTML = "";
+
+  data.forEach((item, index) => {
+    const card = document.createElement("div");
+    card.className = "flip-card h-40";
+
+    card.innerHTML = `
+      <div class="flip-card-inner h-full" id="card-${index}">
+        <div class="flip-card-front bg-white rounded-2xl shadow-md p-5 flex flex-col justify-center items-center">
+          <h2 class="text-xl font-bold">${item.kanji}</h2>
+          <p class="text-gray-500">${item.hiragana}</p>
+          <button onclick="toggleFlip(${index})"
+            class="mt-3 text-sm text-blue-600">Lihat Arti</button>
+        </div>
+
+        <div class="flip-card-back bg-blue-600 text-white rounded-2xl shadow-md p-5 flex flex-col justify-center items-center">
+          <h2 class="text-lg font-semibold">${item.arti}</h2>
+          <p class="text-sm mt-2">${item.contoh}</p>
+          <button onclick="toggleFlip(${index})"
+            class="mt-3 text-sm underline">Kembali</button>
+        </div>
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+}
+
+function toggleFlip(index) {
+  document.getElementById(`card-${index}`).classList.toggle("flipped");
+}
+
+function filterData() {
+  const keyword = searchInput.value.toLowerCase();
+  const category = categoryFilter.value;
+
+  const filtered = vocabData.filter(item => {
+    const matchKeyword =
+      item.kanji.includes(keyword) ||
+      item.hiragana.includes(keyword) ||
+      item.arti.toLowerCase().includes(keyword);
+
+    const matchCategory =
+      category === "all" || item.kategori === category;
+
+    return matchKeyword && matchCategory;
+  });
+
+  renderVocab(filtered);
+}
+
+searchInput.addEventListener("input", filterData);
+categoryFilter.addEventListener("change", filterData);
+
+renderVocab(vocabData);
+</script>
+
+</body>
+</html>
