@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz Mode - JFT Basic A2 Prep</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+<!-- Header -->
+<header class="bg-purple-600 text-white p-5 rounded-b-3xl shadow-lg flex justify-between items-center">
+  <div>
+    <h1 class="text-lg font-bold">Quiz Mode</h1>
+    <p class="text-xs opacity-90">Simulasi Ujian JFT Basic A2</p>
+  </div>
+  <div class="text-right">
+    <p class="text-xs">Waktu Tersisa</p>
+    <p id="timer" class="text-lg font-bold">15:00</p>
+  </div>
+</header>
+
+<main class="flex-1 p-4">
+
+  <!-- Question Card -->
+  <div id="quizContainer" class="bg-white p-5 rounded-2xl shadow-md">
+
+    <p id="questionNumber" class="text-sm text-gray-500 mb-2"></p>
+    <h2 id="questionText" class="text-lg font-semibold mb-4"></h2>
+
+    <div id="optionsContainer" class="space-y-3"></div>
+
+    <div class="flex justify-between mt-6">
+      <button id="prevBtn"
+              class="px-4 py-2 rounded-xl bg-gray-200 text-gray-600">
+        Previous
+      </button>
+
+      <button id="nextBtn"
+              class="px-4 py-2 rounded-xl bg-purple-600 text-white">
+        Next
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Result Section -->
+  <div id="resultSection" class="hidden mt-6 bg-white p-5 rounded-2xl shadow-md">
+    <h2 class="text-xl font-bold mb-3">Hasil Quiz</h2>
+    <p class="mb-3">Skor Akhir: <span id="finalScore" class="font-bold text-purple-600"></span></p>
+
+    <div id="reviewContainer" class="space-y-4"></div>
+
+    <button onclick="location.reload()"
+            class="mt-4 w-full bg-purple-600 text-white py-3 rounded-xl">
+      Ulangi Quiz
+    </button>
+  </div>
+
+</main>
+
+<script>
+const quizTime = 15 * 60; // 15 menit
+let timeLeft = quizTime;
+let timerInterval;
+
+const questions = [
+  {
+    question: "Arti dari 仕事 adalah...",
+    options: ["Rumah", "Sekolah", "Pekerjaan", "Libur"],
+    answer: 2,
+    explanation: "仕事 (しごと) berarti pekerjaan."
+  },
+  {
+    question: "Partikel yang digunakan untuk tujuan adalah...",
+    options: ["を", "が", "へ", "と"],
+    answer: 2,
+    explanation: "Partikel へ digunakan untuk menunjukkan arah/tujuan."
+  }
+];
+
+// Shuffle soal
+questions.sort(() => Math.random() - 0.5);
+
+let currentQuestion = 0;
+let userAnswers = new Array(questions.length).fill(null);
+
+const questionText = document.getElementById("questionText");
+const optionsContainer = document.getElementById("optionsContainer");
+const questionNumber = document.getElementById("questionNumber");
+const timerDisplay = document.getElementById("timer");
+const resultSection = document.getElementById("resultSection");
+const reviewContainer = document.getElementById("reviewContainer");
+const finalScore = document.getElementById("finalScore");
+
+function startTimer() {
+  timerInterval = setInterval(() => {
+    let minutes = Math.floor(timeLeft / 60);
+    let seconds = timeLeft % 60;
+    timerDisplay.textContent =
+      `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      finishQuiz();
+    }
+    timeLeft--;
+  }, 1000);
+}
+
+function loadQuestion() {
+  const q = questions[currentQuestion];
+  questionNumber.textContent = `Soal ${currentQuestion + 1} dari ${questions.length}`;
+  questionText.textContent = q.question;
+
+  optionsContainer.innerHTML = "";
+
+  q.options.forEach((option, index) => {
+    const btn = document.createElement("button");
+    btn.textContent = option;
+    btn.className =
+      "w-full p-3 rounded-xl border text-left hover:bg-gray-100 transition";
+
+    if (userAnswers[currentQuestion] === index) {
+      btn.classList.add("bg-purple-100");
+    }
+
+    btn.onclick = () => {
+      userAnswers[currentQuestion] = index;
+      loadQuestion();
+    };
+
+    optionsContainer.appendChild(btn);
+  });
+}
+
+function finishQuiz() {
+  document.getElementById("quizContainer").classList.add("hidden");
+  resultSection.classList.remove("hidden");
+
+  let score = 0;
+
+  questions.forEach((q, i) => {
+    if (userAnswers[i] === q.answer) score++;
+  });
+
+  finalScore.textContent = `${score} / ${questions.length}`;
+
+  reviewContainer.innerHTML = "";
+
+  questions.forEach((q, i) => {
+    const div = document.createElement("div");
+    div.className = "p-4 rounded-xl border";
+
+    const isCorrect = userAnswers[i] === q.answer;
+
+    div.innerHTML = `
+      <p class="font-semibold">${i + 1}. ${q.question}</p>
+      <p class="text-sm mt-1">Jawaban Anda: 
+        <span class="${isCorrect ? 'text-green-600' : 'text-red-600'} font-semibold">
+          ${q.options[userAnswers[i]] || "Tidak dijawab"}
+        </span>
+      </p>
+      <p class="text-sm">Jawaban Benar: 
+        <span class="text-green-600 font-semibold">
+          ${q.options[q.answer]}
+        </span>
+      </p>
+      <p class="text-xs text-gray-600 mt-1">${q.explanation}</p>
+    `;
+
+    reviewContainer.appendChild(div);
+  });
+}
+
+document.getElementById("nextBtn").onclick = () => {
+  if (currentQuestion < questions.length - 1) {
+    currentQuestion++;
+    loadQuestion();
+  } else {
+    clearInterval(timerInterval);
+    finishQuiz();
+  }
+};
+
+document.getElementById("prevBtn").onclick = () => {
+  if (currentQuestion > 0) {
+    currentQuestion--;
+    loadQuestion();
+  }
+};
+
+startTimer();
+loadQuestion();
+</script>
+
+</body>
+</html>
