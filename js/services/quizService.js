@@ -8,3 +8,12 @@ export async function getQuestions(type="quiz") {
     .map(doc => doc.data())
     .filter(q => q.type === type);
 }
+export async function getQuestionsRandom(limit = 20) {
+  const snapshot = await getDocs(collection(db, "questions"));
+  const all = snapshot.docs.map(doc => doc.data());
+
+  // shuffle
+  const shuffled = all.sort(() => 0.5 - Math.random());
+
+  return shuffled.slice(0, limit);
+}
