@@ -1,19 +1,41 @@
 import { db } from "../firebase.js";
-import { collection, getDocs } from
-"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import {
+  collection,
+  query,
+  orderBy,
+  limit,
+  getDocs,
+  where
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-export async function getQuestions(type="quiz") {
-  const snapshot = await getDocs(collection(db, "questions"));
-  return snapshot.docs
-    .map(doc => doc.data())
-    .filter(q => q.type === type);
-}
-export async function getQuestionsRandom(limit = 20) {
-  const snapshot = await getDocs(collection(db, "questions"));
-  const all = snapshot.docs.map(doc => doc.data());
+export async function getQuestionsRandom(limitCount = 20) {
 
-  // shuffle
-  const shuffled = all.sort(() => 0.5 - Math.random());
+  const randomValue = Math.random();
 
-  return shuffled.slice(0, limit);
+  const q = query(
+    collection(db, "questions"),
+    where("type", "==", "quiz"),
+    orderBy("random"),
+    limit(limitCount)
+  );
+
+  const snapshot = await getDocs(q);
+  let questions = snapshot.docs.map(doc => doc.data());
+
+  // Jika kurang dari 20 (misalnya random di akhir range)
+  if (questions.length < limitCount) {
+    const q2 = query(
+      collection(db, "questions"),
+      where("type", "==", "quiz"),
+      orderBy("random"),
+      limit(limitCount - questions.length)
+    );
+
+    const snapshot2 = await getDocs(q2);
+    questions = questions.concat(
+      snapshot2.docs.map(doc => doc.data())
+    );
+  }
+
+  return questions;
 }
