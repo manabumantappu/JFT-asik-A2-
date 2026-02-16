@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Upload Kosakata A2</title>
+</head>
+<body>
+
+<input type="file" id="fileInput">
+<button onclick="uploadData()">Upload</button>
+
+<script type="module">
+
+import { db } from "./js/firebase.js";
+import {
+  collection,
+  addDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+async function uploadData() {
+
+  const file = document.getElementById("fileInput").files[0];
+  const text = await file.text();
+  const data = JSON.parse(text);
+
+  for (let item of data) {
+    await addDoc(collection(db, "vocab"), {
+      kanji: item.kanji,
+      romaji: item.romaji,
+      arti: item.arti,
+      level: "A2",
+      createdAt: serverTimestamp()
+    });
+  }
+
+  alert("Upload selesai!");
+}
+
+window.uploadData = uploadData;
+
+</script>
+
+</body>
+</html>
