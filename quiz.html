@@ -3,23 +3,58 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quiz Mode</title>
+<title>Quiz Flashcard</title>
 <script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+.card {
+  perspective: 1000px;
+}
+.card-inner {
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+.card.flip .card-inner {
+  transform: rotateY(180deg);
+}
+.card-front, .card-back {
+  backface-visibility: hidden;
+}
+.card-back {
+  transform: rotateY(180deg);
+}
+</style>
+
 </head>
+
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
-<header class="bg-purple-600 text-white p-4 rounded-b-3xl flex justify-between">
-<h1 class="text-lg font-bold">Quiz Mode</h1>
-<span id="timer">10:00</span>
+<header class="bg-blue-600 text-white p-5 rounded-b-3xl shadow-lg">
+  <h1 class="text-xl font-bold">Quiz Flashcard</h1>
+  <p id="progress" class="text-sm opacity-80"></p>
 </header>
 
-<main class="p-4">
-<div id="quizBox" class="bg-white p-5 rounded-2xl shadow"></div>
-<div id="resultBox" class="hidden mt-5 bg-white p-5 rounded-2xl shadow"></div>
+<main class="flex-1 p-5 flex flex-col justify-center items-center">
+
+<div id="cardContainer"></div>
+
+<div id="buttons" class="mt-6 hidden w-full max-w-sm space-y-3">
+  <button onclick="markCorrect()" 
+    class="w-full bg-green-600 text-white p-3 rounded-xl">
+    Saya Benar
+  </button>
+
+  <button onclick="markWrong()" 
+    class="w-full bg-red-500 text-white p-3 rounded-xl">
+    Saya Salah
+  </button>
+</div>
+
+<div id="result" class="hidden text-center mt-6"></div>
+
 </main>
 
-<script src="js/data.js"></script>
-<script type="module" src="js/modules/quizModule.js"></script>
-  
+<script type="module" src="js/modules/quizFlashModule.js"></script>
+
 </body>
 </html>
