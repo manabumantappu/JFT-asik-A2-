@@ -3,21 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Progress</title>
+<title>Dashboard Progress</title>
+
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
+
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
-<header class="bg-yellow-500 text-white p-4 rounded-b-3xl">
-<h1 class="text-lg font-bold">Progress Belajar</h1>
+<header class="bg-yellow-500 text-white p-5 rounded-b-3xl shadow-lg">
+  <h1 class="text-xl font-bold">Dashboard Progress</h1>
 </header>
 
-<main class="p-4">
-<div id="progressBox" class="bg-white p-5 rounded-2xl shadow"></div>
+<main class="p-5 space-y-6 flex-1">
+
+<div id="statsBox" class="grid grid-cols-2 gap-4"></div>
+
+<div class="bg-white p-5 rounded-2xl shadow">
+  <h2 class="font-bold mb-3">Grafik Performa</h2>
+  <canvas id="progressChart"></canvas>
+</div>
+
 </main>
 
+<script type="module" src="js/modules/progressDashboard.js"></script>
 
-<script type="module" src="js/modules/progressModule.js"></script>
-  
 </body>
 </html>
