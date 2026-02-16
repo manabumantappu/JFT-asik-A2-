@@ -32,13 +32,7 @@ function updateTimerDisplay() {
   const timerEl = document.getElementById("timer");
   if (!timerEl) return;
 
-  const minutes = Math.floor(timeLeft / 60);
-  const seconds = timeLeft % 60;
-
-  timerEl.textContent =
-    String(minutes).padStart(2, '0') +
-    ":" +
-    String(seconds).padStart(2, '0');
+  timerEl.textContent = timeLeft + " s";
 }
 
   function nextQuestion() {
