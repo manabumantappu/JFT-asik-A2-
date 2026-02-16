@@ -85,15 +85,18 @@ Next
 <script type="module">
 import { katakanaData } from "./js/data/katakana.js";
 
+let originalData = [...katakanaData];
+let data = [...katakanaData];
 let index = 0;
+let isShuffled = false;
 
 const card = document.getElementById("flashCard");
 const frontText = document.getElementById("frontText");
 const backText = document.getElementById("backText");
 
 function render() {
-  frontText.innerText = katakanaData[index].char;
-  backText.innerText = katakanaData[index].romaji;
+  frontText.innerText = data[index].char;
+  backText.innerText = data[index].romaji;
 }
 
 card.addEventListener("click", () => {
@@ -102,17 +105,42 @@ card.addEventListener("click", () => {
 
 window.nextKana = function() {
   card.classList.remove("flip");
-  index = (index + 1) % katakanaData.length;
+  index = (index + 1) % data.length;
   render();
 };
 
 window.prevKana = function() {
   card.classList.remove("flip");
-  index = (index - 1 + katakanaData.length) % katakanaData.length;
+  index = (index - 1 + data.length) % data.length;
   render();
 };
 
+window.toggleShuffle = function() {
+
+  card.classList.remove("flip");
+
+  if (!isShuffled) {
+    data = shuffle([...data]);
+    isShuffled = true;
+  } else {
+    data = [...originalData];
+    isShuffled = false;
+  }
+
+  index = 0;
+  render();
+};
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
 render();
+
 </script>
 
 </body>
