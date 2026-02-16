@@ -49,10 +49,6 @@
 
 </main>
   
-<a href="privacy.html" class="text-sm underline">
-Privacy Policy
-</a>
-
 <!-- Logout Script -->
 <script type="module">
 import { auth } from "./js/firebase.js";
@@ -86,6 +82,21 @@ auth.onAuthStateChanged(async (user) => {
 
 <!-- Guard (WAJIB PALING BAWAH) -->
 <script type="module" src="js/guard.js"></script>
+
+  <footer class="text-center py-6 text-sm text-gray-500">
+  <div class="space-x-4">
+    <a href="privacy.html" class="hover:underline">
+      Privacy Policy
+    </a>
+    <span>•</span>
+    <a href="terms.html" class="hover:underline">
+      Terms
+    </a>
+  </div>
+  <div class="mt-2">
+    © 2026 Manabu Mantappu
+  </div>
+</footer>
 
 </body>
 </html>
