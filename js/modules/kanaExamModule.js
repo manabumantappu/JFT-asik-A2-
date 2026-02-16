@@ -9,18 +9,38 @@ export function initKanaExam(data, duration = 60) {
   let timerInterval;
   let current;
 
-  function startTimer() {
-    timerInterval = setInterval(() => {
-      timeLeft--;
-      const timerEl = document.getElementById("timer");
-      if (timerEl) timerEl.innerText = timeLeft + "s";
+ function startTimer() {
 
-      if (timeLeft <= 0) {
-        clearInterval(timerInterval);
-        endGame();
-      }
-    }, 1000);
-  }
+  updateTimerDisplay();
+
+  timerInterval = setInterval(() => {
+
+    timeLeft--;
+
+    updateTimerDisplay();
+
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      endGame();
+    }
+
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+
+  const timerEl = document.getElementById("timer");
+  if (!timerEl) return;
+
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = timeLeft % 60;
+
+  timerEl.innerText =
+    String(minutes).padStart(2, '0') +
+    ":" +
+    String(seconds).padStart(2, '0');
+}
+
 
   function nextQuestion() {
 
