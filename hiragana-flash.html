@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Hiragana Flashcard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex flex-col min-h-screen">
+
+<header class="bg-purple-600 text-white p-6 rounded-b-3xl">
+<h1 class="text-xl font-bold">Hiragana Flashcard</h1>
+</header>
+
+<main class="flex-1 flex flex-col items-center justify-center space-y-6">
+
+<div id="flashCard"
+ class="bg-white w-72 h-40 rounded-2xl shadow flex items-center justify-center cursor-pointer">
+</div>
+
+<button onclick="nextKana()"
+ class="bg-purple-600 text-white px-4 py-2 rounded-xl">
+Next
+</button>
+
+</main>
+
+<script type="module">
+import { hiraganaData } from "./js/data/hiragana.js";
+import { initFlash } from "./js/modules/kanaFlashModule.js";
+
+initFlash(hiraganaData);
+</script>
+
+</body>
+</html>
