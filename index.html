@@ -24,38 +24,65 @@
   </button>
 </header>
 
-<main class="flex-1 p-5 space-y-4">
-<a href="admin/dashboard.html"
-   id="adminMenu"
-   class="hidden block bg-yellow-400 p-5 rounded-2xl shadow">
-   ⚙️ Admin Panel
-</a>
+<main class="flex-1 p-5 space-y-6">
 
-<a href="vocab.html" class="block bg-white p-5 rounded-2xl shadow">
-  📚 Kumpulan Kosakata
-</a>
+  <!-- ================= ADMIN SECTION ================= -->
+  <div id="adminMenu" class="hidden">
+    <a href="admin/dashboard.html"
+       class="block bg-yellow-400 p-5 rounded-2xl shadow font-semibold">
+       ⚙️ Admin Panel
+    </a>
+  </div>
 
-<a href="latihan.html" class="block bg-white p-5 rounded-2xl shadow">
-  📝 Latihan Soal
-</a>
+  <!-- ================= JFT SECTION ================= -->
+  <div>
+    <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+      JFT A2 Preparation
+    </h2>
 
-<a href="quiz.html" class="block bg-white p-5 rounded-2xl shadow">
-  🧠 Quiz Mode
-</a>
+    <div class="space-y-4">
 
-<a href="progress.html" class="block bg-white p-5 rounded-2xl shadow">
-  📊 Progress
-</a>
+      <a href="vocab.html" class="block bg-white p-5 rounded-2xl shadow">
+        📚 Kumpulan Kosakata
+      </a>
 
-<a href="hiragana.html" class="block bg-white p-5 rounded-2xl shadow">
-  🔤 Hiragana
-</a>
+      <a href="latihan.html" class="block bg-white p-5 rounded-2xl shadow">
+        📝 Latihan Soal
+      </a>
 
-<a href="katakana.html" class="block bg-white p-5 rounded-2xl shadow">
-  🔡 Katakana
-</a>
-  
+      <a href="quiz.html" class="block bg-white p-5 rounded-2xl shadow">
+        🧠 Quiz Mode
+      </a>
+
+      <a href="progress.html" class="block bg-white p-5 rounded-2xl shadow">
+        📊 Progress
+      </a>
+
+    </div>
+  </div>
+
+  <!-- PEMBATAS -->
+  <div class="flex items-center space-x-4 pt-2">
+    <div class="flex-1 h-px bg-gray-300"></div>
+    <span class="text-xs text-gray-400">Japanese Alphabet</span>
+    <div class="flex-1 h-px bg-gray-300"></div>
+  </div>
+
+  <!-- ================= KANA SECTION ================= -->
+  <div class="space-y-4">
+
+    <a href="hiragana.html" class="block bg-white p-5 rounded-2xl shadow">
+      🔤 Hiragana
+    </a>
+
+    <a href="katakana.html" class="block bg-white p-5 rounded-2xl shadow">
+      🔡 Katakana
+    </a>
+
+  </div>
+
 </main>
+
   
 <!-- Logout Script -->
 <script type="module">
