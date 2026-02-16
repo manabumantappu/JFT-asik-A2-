@@ -1,73 +1,198 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-<title>Admin Dashboard</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Admin Panel</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-gradient-to-b from-slate-900 to-slate-800 
-             text-white min-h-screen">
+<body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white min-h-screen">
 
-<div class="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+<!-- STICKY HEADER -->
+<header class="sticky top-0 z-50 
+               bg-slate-900/80 backdrop-blur-lg 
+               border-b border-white/10">
 
-  <!-- TITLE -->
-  <h1 class="text-3xl sm:text-4xl font-bold mb-8">
-    Admin Panel
-  </h1>
+  <div class="max-w-6xl mx-auto px-4 py-5 flex justify-between items-center">
+
+    <h1 class="text-2xl sm:text-3xl font-bold tracking-wide">
+      ⚙️ Admin Panel
+    </h1>
+
+    <a href="../index.html"
+       class="text-sm bg-white/10 px-4 py-2 rounded-xl hover:bg-white/20 transition">
+       ⬅ Back
+    </a>
+
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="max-w-6xl mx-auto px-4 py-8 space-y-10">
 
   <!-- ACTION BUTTONS -->
-  <div class="grid gap-4 sm:flex sm:gap-6 mb-10">
+  <div class="grid sm:flex gap-4">
 
     <a href="add-question.html"
-      class="w-full sm:w-auto
-             bg-blue-600 hover:bg-blue-700
-             text-white
-             px-6 py-4
-             text-lg sm:text-base
-             rounded-2xl
-             shadow-lg
-             text-center
-             transition active:scale-95">
+       class="flex-1 bg-blue-600 hover:bg-blue-700
+              py-4 rounded-2xl text-center
+              text-lg font-semibold shadow-lg
+              transition active:scale-95">
       ➕ Tambah Soal
     </a>
 
     <a href="upload-vocab.html"
-      class="w-full sm:w-auto
-             bg-green-600 hover:bg-green-700
-             text-white
-             px-6 py-4
-             text-lg sm:text-base
-             rounded-2xl
-             shadow-lg
-             text-center
-             transition active:scale-95">
+       class="flex-1 bg-green-600 hover:bg-green-700
+              py-4 rounded-2xl text-center
+              text-lg font-semibold shadow-lg
+              transition active:scale-95">
       📚 Upload Kosakata
     </a>
 
   </div>
 
-  <!-- USER MANAGEMENT CARD -->
-  <div class="bg-slate-800/80 backdrop-blur-md
-              rounded-3xl
-              p-6 sm:p-8
-              shadow-2xl">
+  <!-- USER MANAGEMENT -->
+  <div class="bg-white/5 backdrop-blur-xl
+              border border-white/10
+              rounded-3xl p-6 shadow-2xl">
 
-    <h2 class="text-xl sm:text-2xl font-semibold mb-6">
-      User & Admin Management
-    </h2>
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
 
-    <div id="userList"
-         class="space-y-4 text-base sm:text-sm">
-      Loading user...
+      <h2 class="text-xl sm:text-2xl font-semibold">
+        👥 User & Admin Management
+      </h2>
+
+      <input id="searchUser"
+        type="text"
+        placeholder="Search user..."
+        class="bg-white/10 border border-white/20
+               rounded-xl px-4 py-2
+               focus:outline-none focus:ring-2 focus:ring-blue-500">
+    </div>
+
+    <div id="userList" class="space-y-4">
+      <!-- Skeleton Loading -->
+      <div class="animate-pulse bg-white/10 h-16 rounded-xl"></div>
+      <div class="animate-pulse bg-white/10 h-16 rounded-xl"></div>
     </div>
 
   </div>
 
-</div>
+</main>
 
-<script type="module" src="../js/modules/adminUserModule.js"></script>
-<script type="module" src="../js/roleGuard.js"></script>
-<script type="module" src="../js/darkmode.js"></script>
+<script type="module">
+import { db } from "../js/firebase.js";
+import {
+  collection,
+  getDocs,
+  doc,
+  updateDoc,
+  deleteDoc
+} from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+const userList = document.getElementById("userList");
+const searchInput = document.getElementById("searchUser");
+
+let allUsers = [];
+
+async function loadUsers() {
+
+  userList.innerHTML = "";
+
+  const snap = await getDocs(collection(db, "users"));
+  allUsers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+  renderUsers(allUsers);
+}
+
+function renderUsers(users) {
+
+  if (users.length === 0) {
+    userList.innerHTML = `
+      <div class="text-center text-gray-400 py-6">
+        No users found.
+      </div>
+    `;
+    return;
+  }
+
+  userList.innerHTML = users.map(user => `
+    <div class="bg-white/10 backdrop-blur-md
+                border border-white/10
+                rounded-2xl p-5
+                flex flex-col sm:flex-row
+                sm:items-center justify-between
+                gap-4
+                transition hover:bg-white/20">
+
+      <div>
+        <div class="font-semibold text-lg">
+          ${user.email}
+        </div>
+        <div class="text-sm text-gray-400">
+          Role: ${user.role || "user"}
+        </div>
+        <div class="text-sm mt-1">
+          ${user.disabled 
+            ? '<span class="bg-red-500/20 text-red-400 px-2 py-1 rounded-lg text-xs">Disabled</span>' 
+            : '<span class="bg-green-500/20 text-green-400 px-2 py-1 rounded-lg text-xs">Active</span>'}
+        </div>
+      </div>
+
+      <div class="flex flex-wrap gap-2">
+
+        <button onclick="toggleRole('${user.id}','${user.role}')"
+          class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-xl text-sm transition">
+          Toggle Role
+        </button>
+
+        <button onclick="toggleDisable('${user.id}', ${user.disabled || false})"
+          class="bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded-xl text-sm text-black transition">
+          ${user.disabled ? "Enable" : "Disable"}
+        </button>
+
+        <button onclick="deleteUser('${user.id}')"
+          class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-xl text-sm transition">
+          Delete
+        </button>
+
+      </div>
+
+    </div>
+  `).join("");
+}
+
+window.toggleRole = async (id, role) => {
+  await updateDoc(doc(db, "users", id), {
+    role: role === "admin" ? "user" : "admin"
+  });
+  loadUsers();
+};
+
+window.toggleDisable = async (id, disabled) => {
+  await updateDoc(doc(db, "users", id), {
+    disabled: !disabled
+  });
+  loadUsers();
+};
+
+window.deleteUser = async (id) => {
+  if (!confirm("Delete this user?")) return;
+  await deleteDoc(doc(db, "users", id));
+  loadUsers();
+};
+
+searchInput.addEventListener("input", () => {
+  const keyword = searchInput.value.toLowerCase();
+  const filtered = allUsers.filter(u =>
+    u.email.toLowerCase().includes(keyword)
+  );
+  renderUsers(filtered);
+});
+
+loadUsers();
+</script>
 
 </body>
 </html>
