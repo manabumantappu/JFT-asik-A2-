@@ -7,9 +7,10 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-gray-100 min-h-screen flex flex-col">
+<body class="bg-gray-100 h-screen flex flex-col overflow-hidden">
 
-<header class="bg-blue-600 text-white p-5 rounded-b-3xl shadow-lg relative">
+<header class="bg-blue-600 text-white p-5 rounded-b-3xl shadow-lg
+               fixed top-0 left-0 right-0 z-50">
   <h1 class="text-2xl font-bold">JFT Basic A2 Prep</h1>
   <p class="text-sm">Persiapan Ujian JFT Basic A2</p>
   
@@ -24,7 +25,7 @@
   </button>
 </header>
 
-<main class="flex-1 p-6 space-y-5">
+<main class="flex-1 mt-36 p-5 space-y-4 overflow-y-auto">
 
   <!-- ================= ADMIN SECTION ================= -->
   <div id="adminMenu" class="hidden">
