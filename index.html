@@ -25,6 +25,11 @@
 </header>
 
 <main class="flex-1 p-5 space-y-4">
+<a href="admin/dashboard.html"
+   id="adminMenu"
+   class="hidden block bg-yellow-400 p-5 rounded-2xl shadow">
+   ⚙️ Admin Panel
+</a>
 
 <a href="vocab.html" class="block bg-white p-5 rounded-2xl shadow">
   📚 Kumpulan Kosakata
@@ -67,6 +72,9 @@ window.logoutUser = async () => {
   await signOut(auth);
   window.location.href = "login.html";
 };
+if (role === "admin") {
+  document.getElementById("adminMenu").classList.remove("hidden");
+}
 
 // Ambil role dan tampilkan
 auth.onAuthStateChanged(async (user) => {
