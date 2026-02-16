@@ -5,35 +5,62 @@
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white">
+<body class="bg-gradient-to-b from-slate-900 to-slate-800 
+             text-white min-h-screen">
 
-<div class="p-6 space-y-6">
+<div class="max-w-5xl mx-auto px-4 sm:px-6 py-8">
 
-  <h1 class="text-2xl font-bold mb-4">Admin Panel</h1>
+  <!-- TITLE -->
+  <h1 class="text-3xl sm:text-4xl font-bold mb-8">
+    Admin Panel
+  </h1>
 
-  <!-- MENU ACTION -->
-  <div class="space-x-2">
+  <!-- ACTION BUTTONS -->
+  <div class="grid gap-4 sm:flex sm:gap-6 mb-10">
+
     <a href="add-question.html"
-      class="bg-blue-600 text-white px-4 py-2 rounded-xl">
-      Tambah Soal
+      class="w-full sm:w-auto
+             bg-blue-600 hover:bg-blue-700
+             text-white
+             px-6 py-4
+             text-lg sm:text-base
+             rounded-2xl
+             shadow-lg
+             text-center
+             transition active:scale-95">
+      ➕ Tambah Soal
     </a>
 
     <a href="upload-vocab.html"
-      class="bg-green-600 text-white px-4 py-2 rounded-xl">
-      Upload Kosakata
+      class="w-full sm:w-auto
+             bg-green-600 hover:bg-green-700
+             text-white
+             px-6 py-4
+             text-lg sm:text-base
+             rounded-2xl
+             shadow-lg
+             text-center
+             transition active:scale-95">
+      📚 Upload Kosakata
     </a>
+
   </div>
 
+  <!-- USER MANAGEMENT CARD -->
+  <div class="bg-slate-800/80 backdrop-blur-md
+              rounded-3xl
+              p-6 sm:p-8
+              shadow-2xl">
 
-  <!-- USER MANAGEMENT -->
-  <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow mt-8">
-    <h2 class="text-xl font-bold mb-4">
+    <h2 class="text-xl sm:text-2xl font-semibold mb-6">
       User & Admin Management
     </h2>
 
-    <div id="userList" class="space-y-3">
+    <div id="userList"
+         class="space-y-4 text-base sm:text-sm">
       Loading user...
     </div>
+
   </div>
 
 </div>
