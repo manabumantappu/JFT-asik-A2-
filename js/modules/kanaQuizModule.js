@@ -1,24 +1,31 @@
-export function initQuiz(data, mode = "normal") {
+export function initQuiz(data, mode = "quiz") {
 
   const container = document.getElementById("quizBox");
 
   let score = 0;
-  let timeLeft = 30;
+
+  // ⏱ TIMER BERBEDA
+  let timeLeft = mode === "speed" ? 30 : 60;
+
   let timerInterval;
   let current;
 
   function startTimer() {
 
-    const timerEl = document.getElementById("timer");
-
     timerInterval = setInterval(() => {
+
       timeLeft--;
-      timerEl.innerText = timeLeft + "s";
+
+      const timerEl = document.getElementById("timer");
+      if (timerEl) {
+        timerEl.innerText = timeLeft + "s";
+      }
 
       if (timeLeft <= 0) {
         clearInterval(timerInterval);
         endGame();
       }
+
     }, 1000);
   }
 
@@ -29,8 +36,8 @@ export function initQuiz(data, mode = "normal") {
     const choices = shuffle([
       current.romaji,
       ...shuffle(data.filter(d => d.romaji !== current.romaji))
-         .slice(0,3)
-         .map(d => d.romaji)
+        .slice(0, 3)
+        .map(d => d.romaji)
     ]);
 
     container.innerHTML = `
@@ -72,7 +79,10 @@ export function initQuiz(data, mode = "normal") {
       </div>
 
       <div class="text-xl mb-4">
-        Skor Akhir: <span class="text-indigo-600 font-bold">${score}</span>
+        Skor Akhir: 
+        <span class="text-indigo-600 font-bold">
+          ${score}
+        </span>
       </div>
 
       <button onclick="location.reload()"
