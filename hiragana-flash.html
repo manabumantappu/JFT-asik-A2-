@@ -5,22 +5,14 @@
 <script src="https://cdn.tailwindcss.com"></script>
 
 <style>
-.perspective {
-  perspective: 1200px;
-}
+.perspective { perspective: 1200px; }
 .card-inner {
   transform-style: preserve-3d;
   transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
 }
-.card.flip .card-inner {
-  transform: rotateY(180deg);
-}
-.card-face {
-  backface-visibility: hidden;
-}
-.card-back {
-  transform: rotateY(180deg);
-}
+.card.flip .card-inner { transform: rotateY(180deg); }
+.card-face { backface-visibility: hidden; }
+.card-back { transform: rotateY(180deg); }
 </style>
 
 </head>
@@ -28,7 +20,7 @@
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
 <header class="bg-purple-600 text-white p-6 rounded-b-3xl">
-<h1 class="text-xl font-bold">Hiragana Flashcard</h1>
+  <h1 class="text-xl font-bold">Hiragana Flashcard</h1>
 </header>
 
 <main class="flex-1 flex flex-col items-center justify-center p-6 space-y-8">
@@ -60,26 +52,44 @@
 
 </div>
 
+<div class="flex space-x-4">
+
+<button onclick="prevKana()"
+ class="bg-gray-300 px-6 py-3 rounded-xl shadow hover:scale-105 transition">
+Prev
+</button>
+
+<button id="shuffleBtn"
+ onclick="toggleShuffle()"
+ class="bg-yellow-500 text-white px-6 py-3 rounded-xl shadow hover:scale-105 transition">
+Shuffle
+</button>
+
 <button onclick="nextKana()"
  class="bg-purple-600 text-white px-6 py-3 rounded-xl shadow hover:scale-105 transition">
 Next
 </button>
+
+</div>
 
 </main>
 
 <script type="module">
 import { hiraganaData } from "./js/data/hiragana.js";
 
+let originalData = [...hiraganaData];
+let data = [...hiraganaData];
 let index = 0;
-let flipped = false;
+let isShuffled = false;
 
 const card = document.getElementById("flashCard");
 const frontText = document.getElementById("frontText");
 const backText = document.getElementById("backText");
+const shuffleBtn = document.getElementById("shuffleBtn");
 
 function render() {
-  frontText.innerText = hiraganaData[index].char;
-  backText.innerText = hiraganaData[index].romaji;
+  frontText.innerText = data[index].char;
+  backText.innerText = data[index].romaji;
 }
 
 card.addEventListener("click", () => {
@@ -88,9 +98,45 @@ card.addEventListener("click", () => {
 
 window.nextKana = function() {
   card.classList.remove("flip");
-  index = (index + 1) % hiraganaData.length;
+  index = (index + 1) % data.length;
   render();
 };
+
+window.prevKana = function() {
+  card.classList.remove("flip");
+  index = (index - 1 + data.length) % data.length;
+  render();
+};
+
+window.toggleShuffle = function() {
+
+  card.classList.remove("flip");
+
+  if (!isShuffled) {
+    data = shuffle([...data]);
+    isShuffled = true;
+    shuffleBtn.innerText = "Shuffle ON";
+    shuffleBtn.classList.remove("bg-yellow-500");
+    shuffleBtn.classList.add("bg-green-500");
+  } else {
+    data = [...originalData];
+    isShuffled = false;
+    shuffleBtn.innerText = "Shuffle";
+    shuffleBtn.classList.remove("bg-green-500");
+    shuffleBtn.classList.add("bg-yellow-500");
+  }
+
+  index = 0;
+  render();
+};
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
 
 render();
 </script>
