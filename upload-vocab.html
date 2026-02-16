@@ -1,44 +1,84 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-  <title>Upload Kosakata A2</title>
+  <meta charset="UTF-8">
+  <title>Upload Kosakata</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
 
-<input type="file" id="fileInput">
-<button onclick="uploadData()">Upload</button>
+<body class="bg-gray-100 min-h-screen p-6">
+
+<h1 class="text-2xl font-bold mb-4">Upload Kosakata JSON</h1>
+
+<div class="bg-white p-6 rounded-2xl shadow max-w-xl">
+
+  <input type="file" id="fileInput"
+    class="mb-4 w-full border p-2 rounded-xl">
+
+  <button onclick="uploadVocab()"
+    class="bg-blue-600 text-white px-4 py-2 rounded-xl">
+    Upload
+  </button>
+
+  <p id="status" class="mt-4 text-sm"></p>
+
+</div>
 
 <script type="module">
 
-import { db } from "./js/firebase.js";
+import { db } from "../js/firebase.js";
 import {
   collection,
   addDoc,
-  serverTimestamp
+  serverTimestamp,
+  writeBatch
 } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-async function uploadData() {
+window.uploadVocab = async () => {
 
   const file = document.getElementById("fileInput").files[0];
+  const status = document.getElementById("status");
+
+  if (!file) {
+    alert("Pilih file JSON terlebih dahulu");
+    return;
+  }
+
+  status.innerText = "Membaca file...";
+
   const text = await file.text();
   const data = JSON.parse(text);
 
-  for (let item of data) {
-    await addDoc(collection(db, "vocab"), {
-      kanji: item.kanji,
-      romaji: item.romaji,
-      arti: item.arti,
+  if (!Array.isArray(data)) {
+    alert("Format JSON harus array");
+    return;
+  }
+
+  const batch = writeBatch(db);
+
+  data.forEach(item => {
+
+    const docRef = collection(db, "vocab");
+
+    batch.set(doc(collection(db, "vocab")), {
+      kanji: item.kanji || "",
+      romaji: item.romaji || "",
+      arti: item.arti || "",
+      kategori: item.kategori || "",
       level: "A2",
       createdAt: serverTimestamp()
     });
-  }
 
-  alert("Upload selesai!");
-}
+  });
 
-window.uploadData = uploadData;
+  await batch.commit();
+
+  status.innerText = "Upload berhasil!";
+};
 
 </script>
+
+<script type="module" src="../js/roleGuard.js"></script>
 
 </body>
 </html>
