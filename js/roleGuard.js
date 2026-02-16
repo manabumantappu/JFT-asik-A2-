@@ -1,9 +1,16 @@
+import { auth } from "./firebase.js";
 import { getUserRole } from "./services/roleService.js";
 
-(async () => {
+auth.onAuthStateChanged(async (user) => {
+  if (!user) {
+    window.location.href = "../login.html";
+    return;
+  }
+
   const role = await getUserRole();
+
   if (role !== "admin") {
     alert("Akses hanya untuk Admin!");
-    location.href = "../index.html";
+    window.location.href = "../index.html";
   }
-})();
+});
