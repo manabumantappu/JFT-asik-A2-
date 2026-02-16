@@ -1,17 +1,15 @@
 export function initQuiz(data, mode = "quiz") {
 
-  const container = document.getElementById("quizBox");
+  const quizBox = document.getElementById("quizBox");
 
   let score = 0;
-
-  // ⏱ TIMER BERBEDA
   let timeLeft = mode === "speed" ? 30 : 60;
 
   let timerInterval;
   let current;
 
+  // ================= TIMER =================
   function startTimer() {
-
     timerInterval = setInterval(() => {
 
       timeLeft--;
@@ -29,54 +27,65 @@ export function initQuiz(data, mode = "quiz") {
     }, 1000);
   }
 
+  // ================= NEXT QUESTION =================
   function nextQuestion() {
 
     current = data[Math.floor(Math.random() * data.length)];
 
     const choices = shuffle([
       current.romaji,
-      ...shuffle(data.filter(d => d.romaji !== current.romaji))
-        .slice(0, 3)
-        .map(d => d.romaji)
+      ...shuffle(
+        data.filter(d => d.romaji !== current.romaji)
+      ).slice(0, 3).map(d => d.romaji)
     ]);
 
-   quizBox.innerHTML = `
-  <div class="flex justify-between text-sm text-gray-500 mb-4">
-    <div>⏳ ${timeLeft}s</div>
-    <div>⭐ Score: ${score}</div>
-  </div>
+    quizBox.innerHTML = `
+      <div class="flex justify-between text-sm text-gray-500 mb-4">
+        <div>⏳ <span id="timer">${timeLeft}s</span></div>
+        <div>⭐ Score: ${score}</div>
+      </div>
 
-  <div class="flex items-center justify-center h-[30vh] sm:h-[220px]">
+      <div class="flex items-center justify-center h-[32vh] sm:h-[240px]">
 
-    <div id="kanaChar"
-         class="kana-animate
-                text-[26vw] sm:text-7xl md:text-8xl
-                font-bold leading-none text-purple-700">
-      ${question.char}
-    </div>
+        <div id="kanaChar"
+             class="kana-animate
+                    text-[28vw] sm:text-7xl md:text-8xl
+                    font-bold leading-none text-purple-700">
+          ${current.char}
+        </div>
 
-  </div>
+      </div>
 
-  <div class="space-y-4 mt-4">
-    ${options.map(opt => `
-      <button
-        class="w-full py-4 rounded-2xl bg-gray-100
-               text-lg font-semibold
-               hover:bg-purple-200
-               active:scale-95 transition"
-        onclick="checkAnswer('${opt}')">
-        ${opt}
-      </button>
-    `).join("")}
-  </div>
-`;
+      <div class="space-y-4 mt-4">
+        ${choices.map(opt => `
+          <button
+            class="choice w-full py-4 rounded-2xl bg-gray-100
+                   text-lg font-semibold
+                   hover:bg-purple-200
+                   active:scale-95 transition">
+            ${opt}
+          </button>
+        `).join("")}
+      </div>
+    `;
 
+    // Trigger animasi ulang
+    setTimeout(() => {
+      const kana = document.getElementById("kanaChar");
+      if (kana) {
+        kana.classList.remove("kana-animate");
+        void kana.offsetWidth;
+        kana.classList.add("kana-animate");
+      }
+    }, 10);
 
+    // Add event listener
     document.querySelectorAll(".choice").forEach(btn => {
       btn.onclick = () => checkAnswer(btn.innerText);
     });
   }
 
+  // ================= CHECK ANSWER =================
   function checkAnswer(answer) {
 
     if (answer === current.romaji) {
@@ -86,24 +95,30 @@ export function initQuiz(data, mode = "quiz") {
     nextQuestion();
   }
 
+  // ================= END GAME =================
   function endGame() {
 
-    container.innerHTML = `
-      <div class="text-2xl font-bold mb-4">
-        ⏰ Waktu Habis!
-      </div>
+    quizBox.innerHTML = `
+      <div class="text-center">
 
-      <div class="text-xl mb-4">
-        Skor Akhir: 
-        <span class="text-indigo-600 font-bold">
-          ${score}
-        </span>
-      </div>
+        <div class="text-3xl font-bold mb-4 text-purple-700">
+          ⏰ Waktu Habis!
+        </div>
 
-      <button onclick="location.reload()"
-        class="bg-indigo-600 text-white px-6 py-2 rounded-xl">
-        Main Lagi
-      </button>
+        <div class="text-xl mb-6">
+          Skor Akhir:
+          <span class="font-bold text-indigo-600">
+            ${score}
+          </span>
+        </div>
+
+        <button onclick="location.reload()"
+          class="bg-indigo-600 text-white px-6 py-3 rounded-2xl
+                 hover:scale-105 active:scale-95 transition">
+          Main Lagi
+        </button>
+
+      </div>
     `;
   }
 
@@ -114,11 +129,3 @@ export function initQuiz(data, mode = "quiz") {
   nextQuestion();
   startTimer();
 }
-setTimeout(() => {
-  const kana = document.getElementById("kanaChar");
-  if (kana) {
-    kana.classList.remove("kana-animate");
-    void kana.offsetWidth;
-    kana.classList.add("kana-animate");
-  }
-}, 10);
