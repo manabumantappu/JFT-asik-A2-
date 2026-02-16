@@ -44,16 +44,18 @@ function showCard() {
     `Soal ${currentIndex + 1} / ${TOTAL_QUESTIONS}`;
 
   cardContainer.innerHTML = `
-    <div class="card w-72 h-48 cursor-pointer" onclick="flipCard(this)">
+  <div class="card w-full max-w-md cursor-pointer mx-auto" onclick="flipCard(this)">
+
       <div class="card-inner bg-white rounded-2xl shadow-lg h-full flex items-center justify-center relative">
 
-        <div class="card-front absolute w-full h-full flex items-center justify-center text-3xl font-bold">
-          ${item.kanji}
-        </div>
+        <div class="card-front absolute w-full h-full flex items-center justify-center text-2xl md:text-3xl font-bold px-4 text-center break-words">
+  ${item.kanji}
+</div>
 
-        <div class="card-back absolute w-full h-full flex items-center justify-center text-lg text-gray-700">
-          ${item.arti}
-        </div>
+<div class="card-back absolute w-full h-full flex items-center justify-center text-lg md:text-xl text-gray-700 px-4 text-center break-words">
+  ${item.arti}
+</div>
+
 
       </div>
     </div>
