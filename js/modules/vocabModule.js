@@ -147,19 +147,36 @@ window.startQuizFromVocab = function () {
     </div>
   `;
 };
+function checkAnswer(button, selected, correct) {
 
-window.checkAnswer = function (answer) {
+  const buttons = document.querySelectorAll(".quiz-option");
 
-  const correct = vocabData[currentIndex].arti;
+  // Disable semua tombol setelah klik
+  buttons.forEach(btn => btn.disabled = true);
 
-  if (answer === correct) {
-    alert("✅ Benar!");
+  if (selected === correct) {
+
+    button.classList.remove("bg-gray-200");
+    button.classList.add("bg-green-500", "text-white");
+
   } else {
-    alert("❌ Salah!\nJawaban: " + correct);
+
+    button.classList.remove("bg-gray-200");
+    button.classList.add("bg-red-500", "text-white");
+
+    // Highlight jawaban benar
+    buttons.forEach(btn => {
+      if (btn.dataset.answer === correct) {
+        btn.classList.add("bg-green-500", "text-white");
+      }
+    });
   }
 
-  renderFlashcard();
-};
+  // Auto lanjut
+  setTimeout(() => {
+    loadNextQuestion();
+  }, 800);
+}
 
 // ================= HELPERS =================
 function getRandomChoices(correct) {
