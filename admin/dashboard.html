@@ -108,13 +108,16 @@ const searchInput = document.getElementById("searchUser");
 
 let allUsers = [];
 let lastDoc = null;
-let pageSize = 20;
+const pageSize = 20;
+
+/* ================= LOAD USERS ================= */
 
 window.loadUsers = async function(reset = true) {
 
-  if (firstLoad) {
+  if (reset) {
     userList.innerHTML = "";
     lastDoc = null;
+    allUsers = [];
   }
 
   let q;
@@ -136,18 +139,22 @@ window.loadUsers = async function(reset = true) {
 
   const snap = await getDocs(q);
 
-  if (!snap.empty) {
-    lastDoc = snap.docs[snap.docs.length - 1];
-  }
+  if (snap.empty) return;
+
+  lastDoc = snap.docs[snap.docs.length - 1];
 
   const users = snap.docs.map(d => ({
     id: d.id,
     ...d.data()
   }));
 
-  renderUsers(users);
-}
+  allUsers = [...allUsers, ...users];
 
+  renderUsers(allUsers);
+};
+
+
+/* ================= RENDER ================= */
 
 function renderUsers(users) {
 
@@ -216,36 +223,46 @@ function renderUsers(users) {
 }
 
 
+/* ================= ACTIONS ================= */
+
 window.toggleRole = async (id, role) => {
   await updateDoc(doc(db, "users", id), {
     role: role === "admin" ? "user" : "admin"
   });
-  loadUsers();
+  loadUsers(true);
 };
 
 window.toggleDisable = async (id, disabled) => {
   await updateDoc(doc(db, "users", id), {
     disabled: !disabled
   });
-  loadUsers();
+  loadUsers(true);
 };
 
 window.deleteUser = async (id) => {
   if (!confirm("Delete this user?")) return;
   await deleteDoc(doc(db, "users", id));
-  loadUsers();
+  loadUsers(true);
 };
+
+
+/* ================= SEARCH ================= */
 
 searchInput.addEventListener("input", () => {
   const keyword = searchInput.value.toLowerCase();
   const filtered = allUsers.filter(u =>
-    u.email.toLowerCase().includes(keyword)
+    u.email?.toLowerCase().includes(keyword)
   );
   renderUsers(filtered);
 });
 
-loadUsers();
+
+/* ================= INIT ================= */
+
+loadUsers(true);
+
 </script>
+
   
 <script type="module" src="../js/roleGuard.js"></script>
   
