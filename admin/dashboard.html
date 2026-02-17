@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+<link rel="icon" href="data:,">
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Admin Panel</title>
@@ -94,27 +96,21 @@ import {
   getDocs,
   doc,
   updateDoc,
-  deleteDoc
+  deleteDoc,
+  query,
+  orderBy,
+  limit,
+  startAfter
 } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
 const userList = document.getElementById("userList");
 const searchInput = document.getElementById("searchUser");
 
 let allUsers = [];
-
-import {
-  collection,
-  query,
-  orderBy,
-  limit,
-  startAfter,
-  getDocs
-} from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
-
 let lastDoc = null;
 let pageSize = 20;
 
-async function loadUsers(firstLoad = true) {
+window.loadUsers = async function(reset = true) {
 
   if (firstLoad) {
     userList.innerHTML = "";
