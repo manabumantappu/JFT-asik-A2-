@@ -31,6 +31,7 @@ export async function getUserRole() {
     await setDoc(userRef, {
       email: email,
       role: role,
+      disabled: false,   // 🔥 TAMBAHKAN INI
       createdAt: serverTimestamp()
     });
 
