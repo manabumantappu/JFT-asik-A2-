@@ -1,17 +1,16 @@
-import { auth } from "./firebase.js";
-import { db } from "./firebase.js";
+import { auth, db } from "./firebase.js";
 
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
 import {
   doc,
   setDoc,
   serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
 
 // ================= REGISTER =================
@@ -23,7 +22,6 @@ window.registerUser = async () => {
     const userCredential =
       await createUserWithEmailAndPassword(auth, email, pass);
 
-    // 🔥 WAJIB ADA INI
     await setDoc(doc(db, "users", userCredential.user.uid), {
       email: userCredential.user.email,
       role: "user",
