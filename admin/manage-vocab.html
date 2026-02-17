@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manage Kosakata</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-900 text-white min-h-screen">
+
+<header class="sticky top-0 bg-slate-900/80 backdrop-blur-lg border-b border-white/10">
+  <div class="max-w-6xl mx-auto px-4 py-5 flex justify-between items-center">
+    <h1 class="text-2xl font-bold">📚 Manage Kosakata</h1>
+    <a href="dashboard.html"
+       class="bg-white/10 px-4 py-2 rounded-xl hover:bg-white/20">
+       ⬅ Back
+    </a>
+  </div>
+</header>
+
+<main class="max-w-6xl mx-auto px-4 py-8">
+
+  <!-- SEARCH -->
+  <div class="mb-6">
+    <input id="searchInput"
+      type="text"
+      placeholder="Search vocab..."
+      class="w-full bg-white/10 border border-white/20
+             rounded-xl px-4 py-3
+             focus:outline-none focus:ring-2 focus:ring-purple-500">
+  </div>
+
+  <!-- LIST -->
+  <div id="vocabList" class="space-y-4"></div>
+
+  <!-- LOAD MORE -->
+  <div class="mt-6">
+    <button onclick="loadVocab(false)"
+      class="w-full bg-white/10 py-3 rounded-xl hover:bg-white/20 transition">
+      Load More
+    </button>
+  </div>
+
+</main>
+
+<script type="module">
+import { db } from "../js/firebase.js";
+import {
+  collection,
+  query,
+  orderBy,
+  limit,
+  startAfter,
+  getDocs,
+  doc,
+  updateDoc,
+  deleteDoc
+} from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+const vocabList = document.getElementById("vocabList");
+const searchInput = document.getElementById("searchInput");
+
+let allVocab = [];
+let lastDoc = null;
+const pageSize = 20;
+
+/* ================= LOAD ================= */
+
+window.loadVocab = async function(reset = true) {
+
+  if (reset) {
+    vocabList.innerHTML = "";
+    lastDoc = null;
+    allVocab = [];
+  }
+
+  let q;
+
+  if (lastDoc) {
+    q = query(
+      collection(db, "vocab"),
+      orderBy("createdAt", "desc"),
+      startAfter(lastDoc),
+      limit(pageSize)
+    );
+  } else {
+    q = query(
+      collection(db, "vocab"),
+      orderBy("createdAt", "desc"),
+      limit(pageSize)
+    );
+  }
+
+  const snap = await getDocs(q);
+  if (snap.empty) return;
+
+  lastDoc = snap.docs[snap.docs.length - 1];
+
+  const data = snap.docs.map(d => ({
+    id: d.id,
+    ...d.data()
+  }));
+
+  allVocab = [...allVocab, ...data];
+
+  renderVocab(allVocab);
+};
+
+
+/* ================= RENDER ================= */
+
+function renderVocab(data) {
+
+  if (data.length === 0) {
+    vocabList.innerHTML = `<div class="text-center text-gray-400 py-6">No vocab found</div>`;
+    return;
+  }
+
+  vocabList.innerHTML = data.map(item => `
+    <div class="bg-white/10 border border-white/10
+                rounded-2xl p-5 flex flex-col sm:flex-row
+                justify-between gap-4">
+
+      <div>
+        <div class="text-lg font-semibold">
+          ${item.kanji || "-"}
+        </div>
+        <div class="text-sm text-gray-400">
+          ${item.romaji} — ${item.arti}
+        </div>
+      </div>
+
+      <div class="flex gap-2">
+
+        <button onclick="editVocab('${item.id}','${item.kanji}','${item.romaji}','${item.arti}')"
+          class="bg-indigo-600 px-4 py-2 rounded-xl text-sm">
+          Edit
+        </button>
+
+        <button onclick="deleteVocab('${item.id}')"
+          class="bg-red-600 px-4 py-2 rounded-xl text-sm">
+          Delete
+        </button>
+
+      </div>
+
+    </div>
+  `).join("");
+}
+
+
+/* ================= EDIT ================= */
+
+window.editVocab = async (id, kanji, romaji, arti) => {
+
+  const newKanji = prompt("Kanji:", kanji);
+  const newRomaji = prompt("Romaji:", romaji);
+  const newArti = prompt("Arti:", arti);
+
+  if (!newRomaji || !newArti) return;
+
+  await updateDoc(doc(db, "vocab", id), {
+    kanji: newKanji,
+    romaji: newRomaji,
+    arti: newArti
+  });
+
+  loadVocab(true);
+};
+
+
+/* ================= DELETE ================= */
+
+window.deleteVocab = async (id) => {
+
+  if (!confirm("Delete vocab?")) return;
+
+  await deleteDoc(doc(db, "vocab", id));
+
+  loadVocab(true);
+};
+
+
+/* ================= SEARCH ================= */
+
+searchInput.addEventListener("input", () => {
+
+  const keyword = searchInput.value.toLowerCase();
+
+  const filtered = allVocab.filter(v =>
+    v.romaji?.toLowerCase().includes(keyword) ||
+    v.arti?.toLowerCase().includes(keyword) ||
+    v.kanji?.includes(keyword)
+  );
+
+  renderVocab(filtered);
+});
+
+
+loadVocab(true);
+
+</script>
+
+<script type="module" src="../js/roleGuard.js"></script>
+
+</body>
+</html>
