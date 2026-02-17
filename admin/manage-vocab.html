@@ -149,11 +149,19 @@ function renderVocab(data) {
       </div>
 
       <div class="flex gap-2">
-        <button onclick="deleteSingle('${item.id}')"
-          class="bg-red-600 px-4 py-2 rounded-xl text-sm">
-          Delete
-        </button>
-      </div>
+
+  <button onclick="editVocab('${item.id}')"
+    class="bg-yellow-500 text-black px-4 py-2 rounded-xl text-sm">
+    Edit
+  </button>
+
+  <button onclick="deleteSingle('${item.id}')"
+    class="bg-red-600 px-4 py-2 rounded-xl text-sm">
+    Delete
+  </button>
+
+</div>
+
 
     </div>
   `).join("");
@@ -239,6 +247,69 @@ window.deleteSingle = async (id) => {
   if (!confirm("Delete vocab?")) return;
 
   await deleteDoc(doc(db, "vocab", id));
+  loadVocab();
+};
+window.editVocab = function(id) {
+
+  const item = allVocab.find(v => v.id === id);
+
+  vocabList.innerHTML = `
+    <div class="bg-white/10 border border-yellow-400
+                rounded-2xl p-6 space-y-4">
+
+      <div>
+        <label class="text-sm text-gray-400">Kanji</label>
+        <input id="editKanji"
+          value="${item.kanji || ""}"
+          class="w-full bg-white/10 border border-white/20
+                 rounded-xl px-3 py-2 mt-1">
+      </div>
+
+      <div>
+        <label class="text-sm text-gray-400">Romaji</label>
+        <input id="editRomaji"
+          value="${item.romaji || ""}"
+          class="w-full bg-white/10 border border-white/20
+                 rounded-xl px-3 py-2 mt-1">
+      </div>
+
+      <div>
+        <label class="text-sm text-gray-400">Arti</label>
+        <input id="editArti"
+          value="${item.arti || ""}"
+          class="w-full bg-white/10 border border-white/20
+                 rounded-xl px-3 py-2 mt-1">
+      </div>
+
+      <div class="flex gap-3">
+
+        <button onclick="saveEdit('${id}')"
+          class="bg-green-600 px-4 py-2 rounded-xl">
+          Save
+        </button>
+
+        <button onclick="loadVocab()"
+          class="bg-gray-500 px-4 py-2 rounded-xl">
+          Cancel
+        </button>
+
+      </div>
+
+    </div>
+  `;
+};
+window.saveEdit = async function(id) {
+
+  const kanji = document.getElementById("editKanji").value;
+  const romaji = document.getElementById("editRomaji").value;
+  const arti = document.getElementById("editArti").value;
+
+  await updateDoc(doc(db, "vocab", id), {
+    kanji,
+    romaji,
+    arti
+  });
+
   loadVocab();
 };
 
